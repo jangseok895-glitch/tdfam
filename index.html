@@ -25,7 +25,7 @@ button,input{font-family:inherit} button{cursor:pointer}
 .badge{display:inline-block;margin-bottom:13px;padding:7px 15px;border:1px solid rgba(91,157,255,.4);border-radius:999px;background:rgba(37,105,220,.12);color:#82bcff;font-size:13px;font-weight:800}
 .title{margin:0;font-size:clamp(36px,5vw,52px);font-weight:900;letter-spacing:-2px}
 .subtitle{margin-top:10px;color:#9ca9bd;font-size:15px}
-.main-grid{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:22px;align-items:start}
+.main-grid{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:22px;align-items:start}
 .card{padding:30px;border:1px solid rgba(106,164,255,.20);border-radius:22px;background:rgba(16,23,40,.95);box-shadow:0 20px 60px rgba(0,0,0,.30)}
 .card-title{margin-bottom:18px;font-size:23px;font-weight:900}
 .description{color:#d2daea;font-size:16px;line-height:1.8}
@@ -41,16 +41,39 @@ button,input{font-family:inherit} button{cursor:pointer}
 .main-btn{min-width:230px;padding:16px 28px;border:0;border-radius:13px;background:linear-gradient(135deg,#296fff,#4a96ff);color:white;font-size:17px;font-weight:900;box-shadow:0 12px 30px rgba(40,111,255,.28)}
 .main-btn:disabled{opacity:.5;cursor:wait}
 .ranking-card{position:sticky;top:20px}.ranking-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.ranking-title strong{font-size:22px}.ranking-top{color:#6caeff;font-size:12px;font-weight:900}
-.ranking-head,.rank-row{display:grid;grid-template-columns:55px 1fr 75px 62px;align-items:center}
+.ranking-head,.rank-row{display:grid;grid-template-columns:42px minmax(110px,1fr) 58px 46px 46px;align-items:center;column-gap:4px}
 .ranking-head{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.07);color:#8391a6;font-size:12px}
 .ranking-list{max-height:450px;overflow-y:auto;scrollbar-width:thin}
 .rank-row{min-height:45px;padding:0 10px;border-bottom:1px solid rgba(255,255,255,.05)}
-.rank-number{color:#8ea0b7;font-weight:800}.rank-id{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-weight:700}.rank-grade{text-align:right;color:#70b2ff;font-size:13px;font-weight:900}
+.rank-number{color:#8ea0b7;font-weight:800}.rank-id{font-weight:800;white-space:nowrap;overflow:visible;text-overflow:clip;min-width:0;font-size:14px}.rank-grade{text-align:right;color:#70b2ff;font-size:13px;font-weight:900}
+
+.stats-btn{padding:5px 6px;border:1px solid rgba(91,157,255,.28);border-radius:8px;background:rgba(45,105,190,.14);color:#91c4ff;font-size:11px;font-weight:800}
+.stats-btn:hover{background:rgba(55,125,220,.23)}
+.stats-modal{display:none;position:fixed;inset:0;z-index:10000;padding:22px;background:rgba(2,6,15,.78);align-items:center;justify-content:center}
+.stats-panel{width:min(620px,100%);max-height:92vh;overflow:auto;border:1px solid rgba(106,164,255,.24);border-radius:22px;background:#101728;padding:26px;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.stats-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.stats-title{font-size:23px;font-weight:900}
+.stats-close{border:0;border-radius:10px;background:rgba(255,255,255,.08);color:#fff;padding:9px 12px;font-weight:900}
+.stats-sub{color:#8f9caf;font-size:13px;margin-bottom:18px}
+.radar-wrap{display:flex;justify-content:center}
+.radar-svg{width:min(430px,100%);height:auto;overflow:visible}
+.radar-grid{fill:none;stroke:rgba(255,255,255,.12);stroke-width:1}
+.radar-axis{stroke:rgba(255,255,255,.12);stroke-width:1}
+.radar-shape{fill:rgba(63,134,255,.22);stroke:#66adff;stroke-width:3}
+.radar-dot{fill:#8fc3ff}
+.radar-label{fill:#dbe7f8;font-size:13px;font-weight:800}
+.radar-score{fill:#74b7ff;font-size:12px;font-weight:900}
+.stats-values{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+.stats-value{padding:10px 7px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.035);text-align:center}
+.stats-value-name{color:#94a3b8;font-size:11px}
+.stats-value-num{margin-top:3px;font-size:18px;font-weight:900;color:#79b8ff}
+@media(max-width:560px){.stats-panel{padding:18px}.stats-values{grid-template-columns:repeat(2,1fr)}.ranking-head,.rank-row{grid-template-columns:38px minmax(90px,1fr) 50px 42px 42px}.stats-btn,.delete-btn{padding:5px 6px;font-size:10px}}
+
 .no-ranking{padding:40px 10px;text-align:center;color:#7f8da1;font-size:13px}
 
 .rank-delete{text-align:right}
 .delete-btn{
-  padding:6px 9px;border:1px solid rgba(255,90,90,.28);border-radius:8px;
+  padding:5px 6px;border:1px solid rgba(255,90,90,.28);border-radius:8px;
   background:rgba(180,45,45,.12);color:#ff9b9b;font-size:11px;font-weight:800
 }
 .delete-btn:hover{background:rgba(210,55,55,.22)}
@@ -109,7 +132,7 @@ button,input{font-family:inherit} button{cursor:pointer}
 </div>
 <div class="card ranking-card">
   <div class="ranking-title"><strong>순위</strong><span class="ranking-top">TOP 30</span></div>
-  <div class="ranking-head"><div>순위</div><div>아이디</div><div style="text-align:right">등급</div><div style="text-align:right">관리</div></div>
+  <div class="ranking-head"><div>순위</div><div>아이디</div><div style="text-align:right">등급</div><div style="text-align:right">통계</div><div style="text-align:right">삭제</div></div>
   <div id="rankingList" class="ranking-list"><div class="no-ranking">순위를 불러오는 중입니다.</div></div>
 </div>
 </div>
@@ -139,6 +162,21 @@ button,input{font-family:inherit} button{cursor:pointer}
   <button class="return-btn" onclick="returnMain()">메인으로 돌아가기</button>
 </section>
 </div></div>
+
+
+<div id="statsModal" class="stats-modal">
+  <div class="stats-panel">
+    <div class="stats-head">
+      <div id="statsTitle" class="stats-title">플레이 통계</div>
+      <button id="statsCloseBtn" class="stats-close" type="button">닫기</button>
+    </div>
+    <div class="stats-sub">설문 응답과 문항별 가중치를 바탕으로, 본인에게 상대적으로 강한 플레이 성향을 강조한 재미용 그래프입니다.</div>
+    <div class="radar-wrap">
+      <svg id="radarSvg" class="radar-svg" viewBox="0 0 460 430" role="img" aria-label="5각형 플레이 성향 그래프"></svg>
+    </div>
+    <div id="statsValues" class="stats-values"></div>
+  </div>
+</div>
 
 <script>
 const SUPABASE_URL = "https://xyibdanmecakevhtdajl.supabase.co";
@@ -190,6 +228,157 @@ const QUESTION_IMAGES = [
   "https://i.ibb.co/5xnrG6ry/image.jpg"
 ];
 
+
+const TRAIT_NAMES = ["공격형","방어형","물량형","컨트롤형","팀워크형"];
+
+/* 문항별 중요도: 상급=5, 중급=3, 하급=1, 미지정=0
+   순서: 공격성, 방어성, 물량성, 컨트롤, 팀워크 */
+const QUESTION_TRAITS = [
+  [3,0,0,5,3],
+  [3,3,0,5,1],
+  [3,0,3,5,5],
+  [5,0,3,5,3],
+  [5,0,0,3,5],
+  [5,3,1,5,3],
+  [0,5,0,3,3],
+  [1,1,0,5,5],
+  [3,1,5,3,3],
+  [5,1,3,3,3],
+  [0,5,0,3,1],
+  [5,3,5,3,3],
+  [3,1,0,5,1],
+  [3,0,0,5,5],
+  [5,0,1,5,0],
+  [1,1,0,5,5],
+  [5,0,0,5,3],
+  [1,1,0,5,3],
+  [3,0,5,3,3],
+  [1,1,0,5,5]
+];
+
+function calculateTraitScores(answerDetails){
+  /*
+    성향 그래프 전용 계산식
+
+    1) 문항 중요도
+       상급=5 / 중급=3 / 하급=1 / 미지정=0
+
+    2) 응답값을 성향용으로 변환
+       매우 그렇다(5) -> +2
+       그렇다(4)      -> +1
+       보통이다(3)    ->  0
+       아니다(2)      -> -1
+       매우 아니다(1) -> -2
+
+    3) 각 성향별 최대 가능 범위로 0~100 환산
+       보통만 선택하면 50점 부근이 됩니다.
+
+    4) 마지막에 개인 평균을 기준으로 차이를 2.4배 확대해
+       '어느 성향이 상대적으로 강한지'가 오각형에서 더 선명하게 보이도록 합니다.
+       이 계산은 최종 등급(S/상픽/중픽/하픽/별픽)에는 전혀 영향을 주지 않습니다.
+  */
+
+  const weightedTotals=[0,0,0,0,0];
+  const maxAbsTotals=[0,0,0,0,0];
+
+  QUESTION_TRAITS.forEach((weights,qIndex)=>{
+    const answer=Array.isArray(answerDetails)
+      ? answerDetails.find(a=>Number(a.q_no)===qIndex+1)
+      : null;
+
+    const originalScore = answer && Number.isFinite(Number(answer.score))
+      ? Number(answer.score)
+      : 3;
+
+    // 1~5 응답을 -2~-+2 성향값으로 변환
+    const tendencyValue = Math.max(-2, Math.min(2, originalScore - 3));
+
+    weights.forEach((weight,tIndex)=>{
+      weightedTotals[tIndex] += weight * tendencyValue;
+      maxAbsTotals[tIndex] += weight * 2;
+    });
+  });
+
+  // 먼저 각 성향의 절대 응답 강도를 0~100으로 환산 (중립=50)
+  const baseScores = weightedTotals.map((value,i)=>{
+    if(!maxAbsTotals[i]) return 50;
+    return 50 + 50 * (value / maxAbsTotals[i]);
+  });
+
+  // 개인의 5개 성향 평균을 기준으로 차이를 확대
+  const mean = baseScores.reduce((a,b)=>a+b,0) / baseScores.length;
+  const CONTRAST = 2.4;
+
+  return baseScores.map(score=>{
+    const contrasted = 50 + (score - mean) * CONTRAST;
+    return Math.max(0, Math.min(100, Math.round(contrasted)));
+  });
+}
+
+function polarPoint(cx,cy,r,angleDeg){
+  const rad=(angleDeg-90)*Math.PI/180;
+  return [cx+r*Math.cos(rad),cy+r*Math.sin(rad)];
+}
+
+function polygonPoints(values,radius,cx=230,cy=215){
+  return values.map((v,i)=>{
+    const [x,y]=polarPoint(cx,cy,radius*(v/100),i*72);
+    return x.toFixed(1)+","+y.toFixed(1);
+  }).join(" ");
+}
+
+function showStats(userId,answers){
+  const scores=calculateTraitScores(answers);
+  const svg=document.getElementById("radarSvg");
+  const cx=230,cy=215,radius=145;
+  let html="";
+
+  [20,40,60,80,100].forEach(level=>{
+    const pts=Array.from({length:5},(_,i)=>{
+      const [x,y]=polarPoint(cx,cy,radius*(level/100),i*72);
+      return x.toFixed(1)+","+y.toFixed(1);
+    }).join(" ");
+    html+='<polygon class="radar-grid" points="'+pts+'"></polygon>';
+  });
+
+  for(let i=0;i<5;i++){
+    const [x,y]=polarPoint(cx,cy,radius,i*72);
+    html+='<line class="radar-axis" x1="'+cx+'" y1="'+cy+'" x2="'+x+'" y2="'+y+'"></line>';
+  }
+
+  html+='<polygon class="radar-shape" points="'+polygonPoints(scores,radius,cx,cy)+'"></polygon>';
+
+  scores.forEach((score,i)=>{
+    const [x,y]=polarPoint(cx,cy,radius*(score/100),i*72);
+    html+='<circle class="radar-dot" cx="'+x+'" cy="'+y+'" r="4"></circle>';
+
+    const [lx,ly]=polarPoint(cx,cy,radius+42,i*72);
+    const anchor=lx<cx-20?"end":(lx>cx+20?"start":"middle");
+    html+='<text class="radar-label" x="'+lx+'" y="'+ly+'" text-anchor="'+anchor+'">'+TRAIT_NAMES[i]+'</text>';
+    html+='<text class="radar-score" x="'+lx+'" y="'+(ly+17)+'" text-anchor="'+anchor+'">'+score+'</text>';
+  });
+
+  svg.innerHTML=html;
+  document.getElementById("statsTitle").textContent=userId+"님의 플레이 통계";
+
+  const values=document.getElementById("statsValues");
+  values.innerHTML="";
+  TRAIT_NAMES.forEach((name,i)=>{
+    const box=document.createElement("div");
+    box.className="stats-value";
+    box.innerHTML='<div class="stats-value-name"></div><div class="stats-value-num"></div>';
+    box.children[0].textContent=name;
+    box.children[1].textContent=scores[i];
+    values.appendChild(box);
+  });
+
+  document.getElementById("statsModal").style.display="flex";
+}
+
+function closeStats(){
+  document.getElementById("statsModal").style.display="none";
+}
+
 const ANSWER_OPTIONS = [
   {name:"매우 그렇다",desc:"항상 이런 상황이 오면 가능하다.",score:5},
   {name:"그렇다",desc:"때때로 모르고 지나치거나 까먹는 경우는 있지만 자주 사용한다.",score:4},
@@ -239,7 +428,7 @@ function getGrade(score){
 async function loadRanking(){
   const box = document.getElementById("rankingList");
   try{
-    const rows = await sb("td_survey_results?select=user_id,grade,total_score,created_at&order=total_score.desc,created_at.asc&limit=30");
+    const rows = await sb("td_survey_results?select=user_id,grade,total_score,created_at,answers&order=total_score.desc,created_at.asc&limit=30");
     box.innerHTML = "";
     if(!rows || rows.length===0){
       box.innerHTML='<div class="no-ranking">아직 완료된 설문이 없습니다.</div>';
@@ -248,15 +437,23 @@ async function loadRanking(){
     rows.forEach((r,i)=>{
       const row=document.createElement("div");
       row.className="rank-row";
-      row.innerHTML='<div class="rank-number">'+(i+1)+'위</div><div class="rank-id"></div><div class="rank-grade"></div><div class="rank-delete"></div>';
+      row.innerHTML='<div class="rank-number">'+(i+1)+'위</div><div class="rank-id"></div><div class="rank-grade"></div><div class="rank-stats"></div><div class="rank-delete"></div>';
       row.children[1].textContent=r.user_id;
+      if(String(r.user_id).length > 12) row.children[1].style.fontSize="12px";
+      else if(String(r.user_id).length > 9) row.children[1].style.fontSize="13px";
       row.children[2].textContent=r.grade;
+
+      const statsBtn=document.createElement("button");
+      statsBtn.className="stats-btn";
+      statsBtn.textContent="통계";
+      statsBtn.onclick=()=>showStats(r.user_id,r.answers);
+      row.children[3].appendChild(statsBtn);
 
       const deleteBtn=document.createElement("button");
       deleteBtn.className="delete-btn";
       deleteBtn.textContent="삭제";
       deleteBtn.onclick=()=>deleteMyResult(r.user_id);
-      row.children[3].appendChild(deleteBtn);
+      row.children[4].appendChild(deleteBtn);
 
       box.appendChild(row);
     });
@@ -439,6 +636,12 @@ async function returnMain(){
   await loadRanking();
   window.scrollTo(0,0);
 }
+
+
+document.getElementById("statsCloseBtn").addEventListener("click",closeStats);
+document.getElementById("statsModal").addEventListener("click",function(e){
+  if(e.target===this) closeStats();
+});
 
 loadRanking();
 </script>
