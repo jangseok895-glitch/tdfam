@@ -41,12 +41,20 @@ button,input{font-family:inherit} button{cursor:pointer}
 .main-btn{min-width:230px;padding:16px 28px;border:0;border-radius:13px;background:linear-gradient(135deg,#296fff,#4a96ff);color:white;font-size:17px;font-weight:900;box-shadow:0 12px 30px rgba(40,111,255,.28)}
 .main-btn:disabled{opacity:.5;cursor:wait}
 .ranking-card{position:sticky;top:20px}.ranking-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.ranking-title strong{font-size:22px}.ranking-top{color:#6caeff;font-size:12px;font-weight:900}
-.ranking-head,.rank-row{display:grid;grid-template-columns:55px 1fr 75px;align-items:center}
+.ranking-head,.rank-row{display:grid;grid-template-columns:55px 1fr 75px 62px;align-items:center}
 .ranking-head{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.07);color:#8391a6;font-size:12px}
 .ranking-list{max-height:450px;overflow-y:auto;scrollbar-width:thin}
 .rank-row{min-height:45px;padding:0 10px;border-bottom:1px solid rgba(255,255,255,.05)}
 .rank-number{color:#8ea0b7;font-weight:800}.rank-id{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-weight:700}.rank-grade{text-align:right;color:#70b2ff;font-size:13px;font-weight:900}
 .no-ranking{padding:40px 10px;text-align:center;color:#7f8da1;font-size:13px}
+
+.rank-delete{text-align:right}
+.delete-btn{
+  padding:6px 9px;border:1px solid rgba(255,90,90,.28);border-radius:8px;
+  background:rgba(180,45,45,.12);color:#ff9b9b;font-size:11px;font-weight:800
+}
+.delete-btn:hover{background:rgba(210,55,55,.22)}
+
 #surveySection{display:none;width:min(900px,100%);margin:auto}
 .progress-info{display:flex;justify-content:space-between;margin-bottom:8px;color:#9eabc0;font-size:13px}
 .progress-bar{height:8px;margin-bottom:20px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.08)}
@@ -101,7 +109,7 @@ button,input{font-family:inherit} button{cursor:pointer}
 </div>
 <div class="card ranking-card">
   <div class="ranking-title"><strong>순위</strong><span class="ranking-top">TOP 30</span></div>
-  <div class="ranking-head"><div>순위</div><div>아이디</div><div style="text-align:right">등급</div></div>
+  <div class="ranking-head"><div>순위</div><div>아이디</div><div style="text-align:right">등급</div><div style="text-align:right">관리</div></div>
   <div id="rankingList" class="ranking-list"><div class="no-ranking">순위를 불러오는 중입니다.</div></div>
 </div>
 </div>
@@ -224,7 +232,8 @@ function getGrade(score){
   if(score >= 95) return "S등급";
   if(score >= 90) return "상픽";
   if(score >= 70) return "중픽";
-  return "하픽";
+  if(score >= 60) return "하픽";
+  return "별픽";
 }
 
 async function loadRanking(){
@@ -239,9 +248,16 @@ async function loadRanking(){
     rows.forEach((r,i)=>{
       const row=document.createElement("div");
       row.className="rank-row";
-      row.innerHTML='<div class="rank-number">'+(i+1)+'위</div><div class="rank-id"></div><div class="rank-grade"></div>';
+      row.innerHTML='<div class="rank-number">'+(i+1)+'위</div><div class="rank-id"></div><div class="rank-grade"></div><div class="rank-delete"></div>';
       row.children[1].textContent=r.user_id;
       row.children[2].textContent=r.grade;
+
+      const deleteBtn=document.createElement("button");
+      deleteBtn.className="delete-btn";
+      deleteBtn.textContent="삭제";
+      deleteBtn.onclick=()=>deleteMyResult(r.user_id);
+      row.children[3].appendChild(deleteBtn);
+
       box.appendChild(row);
     });
   }catch(e){
@@ -359,6 +375,52 @@ async function submitSurvey(){
     window.scrollTo(0,0);
   }catch(e){
     alert(e.message || "저장 중 오류가 발생했습니다.");
+  }finally{
+    hideLoading();
+  }
+}
+
+
+async function deleteMyResult(userId){
+  const input=prompt(userId+"님의 설문 결과를 삭제하려면 등록한 비밀번호 4자리를 입력해주세요.");
+
+  if(input===null) return;
+
+  const password=String(input).trim();
+
+  if(!/^\d{4}$/.test(password)){
+    alert("비밀번호는 숫자 4자리로 입력해주세요.");
+    return;
+  }
+
+  showLoading();
+
+  try{
+    const rows=await sb(
+      "td_survey_results?select=id,password&user_id=eq."+encodeURIComponent(userId)+"&limit=1"
+    );
+
+    if(!rows || rows.length===0){
+      throw new Error("해당 설문 결과를 찾을 수 없습니다.");
+    }
+
+    if(String(rows[0].password)!==password){
+      throw new Error("비밀번호가 일치하지 않습니다.");
+    }
+
+    await sb(
+      "td_survey_results?user_id=eq."+encodeURIComponent(userId),
+      {
+        method:"DELETE",
+        headers:{"Prefer":"return=minimal"}
+      }
+    );
+
+    alert("설문 결과가 삭제되었습니다.");
+    await loadRanking();
+
+  }catch(e){
+    alert(e.message || "삭제 중 오류가 발생했습니다.");
   }finally{
     hideLoading();
   }
