@@ -46,6 +46,9 @@ button,input{font-family:inherit} button{cursor:pointer}
 .progress-fill{width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#2878ff,#73c7ff);transition:width .25s}
 .question-number{margin-bottom:13px;color:#6bb1ff;font-size:14px;font-weight:900}
 .question-text{margin-bottom:25px;font-size:23px;line-height:1.55;font-weight:900}
+.question-image-wrap{display:flex;justify-content:center;margin:-5px 0 22px}
+.question-image{width:180px;height:110px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:#0a1222;box-shadow:0 8px 24px rgba(0,0,0,.22)}
+@media(max-width:560px){.question-image{width:150px;height:92px}}
 .answers{display:grid;gap:10px}
 .answer{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:rgba(255,255,255,.035);cursor:pointer}
 .answer:hover{border-color:rgba(81,148,255,.55);background:rgba(49,119,255,.08)}.answer.selected{border-color:#4c94ff;background:rgba(42,116,255,.16)}
@@ -70,7 +73,7 @@ button,input{font-family:inherit} button{cursor:pointer}
 <div class="main-grid">
 <div class="card">
   <div class="card-title">설문 안내</div>
-  <div class="description">스타크래프트에 관련된 본인의 실력을 알고자 하는 설문지 입니다.<br><br>아래 기준으로 생각하시고, 각 문항에서 본인에게 가장 가까운 항목의 네모칸을 체크해주시면 됩니다.</div>
+  <div class="description">스타크래프트에 관련된 본인의 실력을 알아보기 위한 설문지입니다.<br><br><strong style="color:#8fc3ff">이 설문자료는 재미를 위한 설문자료입니다. 객관적 측정이 아니므로 재미로만 참여해주시기 바랍니다.</strong><br><br>아래 기준으로 생각하시고, 각 문항에서 본인에게 가장 가까운 항목의 네모칸을 체크해주시면 됩니다.</div>
   <div class="guide">
     <div class="guide-title">응답 기준</div>
     <div class="guide-row"><div class="guide-name">매우 그렇다</div><div class="guide-text">항상 이런 상황이 오면 가능하다.</div></div>
@@ -104,6 +107,7 @@ button,input{font-family:inherit} button{cursor:pointer}
 <div class="card">
   <div id="questionNumber" class="question-number"></div>
   <div id="questionText" class="question-text"></div>
+  <div class="question-image-wrap"><img id="questionImage" class="question-image" alt="문항 참고 이미지"></div>
   <div id="answers" class="answers"></div>
   <div class="survey-buttons">
     <button id="prevBtn" class="nav-btn prev-btn" onclick="previousQuestion()">이전</button>
@@ -126,26 +130,49 @@ const SUPABASE_URL = "https://xyibdanmecakevhtdajl.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_uvYqwDymxodcSdpT1zAWyg_PeVHh_ZO";
 
 const QUESTIONS = [
-  "상대방의 빌드와 병력 구성을 보고 대응 방법을 빠르게 판단할 수 있다.",
-  "게임 초반 정찰을 통해 상대방의 전략을 어느 정도 예상할 수 있다.",
-  "미니맵을 자주 확인하면서 상대 병력의 움직임을 파악하는 편이다.",
-  "교전이 시작되면 병력을 효율적으로 컨트롤할 수 있다.",
-  "상대방의 병력 조합에 맞춰 내 병력 조합을 변경할 수 있다.",
-  "게임 상황에 따라 공격과 수비 중 어떤 선택이 필요한지 판단할 수 있다.",
-  "멀티를 가져가야 하는 적절한 타이밍을 알고 있다.",
-  "자원 상황을 확인하면서 생산시설과 병력을 적절하게 늘릴 수 있다.",
-  "상대방의 견제 가능성을 생각하고 미리 대비하는 편이다.",
-  "전투 중에도 생산과 병력 충원을 꾸준히 할 수 있다.",
-  "상대방의 주요 병력이 어디에 있는지 지속적으로 예상하는 편이다.",
-  "상대방의 약점을 발견하면 바로 공격이나 견제로 연결할 수 있다.",
-  "불리한 상황에서도 역전할 수 있는 방법을 찾는 편이다.",
-  "유리한 상황에서 무리하지 않고 안정적으로 게임을 끝낼 수 있다.",
-  "맵의 지형을 활용하여 유리한 위치에서 전투하려고 한다.",
-  "상대방의 테크트리를 보고 다음에 나올 유닛을 예상할 수 있다.",
-  "게임 중 필요한 업그레이드를 적절한 시기에 진행할 수 있다.",
-  "상대방이 공격할 가능성이 높은 타이밍을 예상할 수 있다.",
-  "여러 지역에서 동시에 전투가 발생해도 어느 정도 대응할 수 있다.",
-  "게임 전체 흐름을 보면서 다음 행동을 미리 계획하는 편이다."
+  "[테란] 사이언스배슬 - 상대에 저그가 있을 경우 사이언스배슬을 생산하여 이레이디에이트로 드론을 괴롭히는 편이다.",
+  "[저그] 디파일러 사용 - 다크스웜과 플레이그까지도 적절히 잘 사용하는 편이다.",
+  "[프로토스] 물량/견제 - 셔틀, 커세어를 띄워 하이템플러 사이오닉스톰으로 상대방 일꾼을 괴롭히는 플레이와 물량플레이가 동시에 가능하다.",
+  "[테란] 바이오닉 - 마린, 매딕의 바이오닉 체제에서 마린, 매딕의 부대를 나눠서 조종할 수 있다.",
+  "[저그] 체제 - 상황에 따라 저글링으로 갈지, 히드라/럴커 체제로 갈지, 뮤탈 체제로 갈지 결정하고 하는 편이다.",
+  "[프로토스] 아비터 사용 - 장기전으로 갈 경우 아비터까지도 자주 가는 편이다.",
+  "[테란] 방어 - 3컬러가 공격을 올 경우, 벙커 방어와 SCV 비비기를 충분히 사용하여 대체로 막을 수 있다고 생각한다.",
+  "[저그] 오버로드 - 오버로드 위치를 상대방 입구, 내 입구, 셔틀이 날아다닐 경로에 정확히 배치하는 편이다.",
+  "[프로토스] 물량전 - 물량전일 경우 질럿, 드래군, 하이템플러, 다크템플러 등 게이트웨이 유닛을 상황에 맞게 복합적으로 사용하는 편이다.",
+  "[테란] 메카닉 사용 - 상대방의 입구 언덕탱크, 중앙 탱크 진출 타이밍 및 장악, 골리앗과 벌쳐도 상황에 맞춰 사용하는 편이다.",
+  "[저그] 초반 방어 대비 - 초반 3컬러를 대비해 나만의 성큰 심시티가 있거나 더 좋은 심시티로 성큰을 효율적으로 사용하려고 한다.",
+  "[프로토스] 물량 - 중후반까지 갈 경우 물량으로 15게이트 이상까지도 만들어 돌릴 수 있다.",
+  "[테란] 업그레이드 - 최소한 아머리 2개는 만들어서 업그레이드를 계속 신경쓰면서 한다.",
+  "[저그] 가스 조절 - 저글링 빌드업, 히드라 라인, 뮤탈 라인을 할지 초반에 가스를 조절하며 결정하는 편이다.",
+  "[프로토스] 빌드 - 우리편에 2토스 이상 있을 경우 상대 토스의 빌드를 보면서 셔틀플레이를 해볼지, 물량으로 나갈지 조절하면서 운영하는 편이다.",
+  "[테란] 스캔 - 우리편에게 스캔이 필요한 상황인지 판단하여 스캔을 뿌리고, 가능하면 상대의 물량 판단과 빌드 판단을 위해 스캔을 유용하게 사용하는 편이다.",
+  "[저그] 럴커 - 상대방의 빌드를 파악하여 럴커를 사용해야 할 상황이면 패스트 럴커로 진행하며, 럴커와 다른 지상유닛을 동시에 사용할 때 버로우와 공격 밸런스를 적절히 맞추면서 공격하는 편이다.",
+  "[프로토스] 특수 유닛 - 다크템플러나 리버, 다크아칸 등 비주류 유닛을 특수한 상황에서 적절히 사용할 수 있다.",
+  "[테란] 바이오닉 운영 - 바이오닉 위주의 빌드를 선택했을 때 자원이 남지 않도록 대량 배럭 늘리기, 업그레이드, 적절한 팩토리를 돌려 자원을 효율적으로 사용할 수 있다.",
+  "[통합] 종족 밸런스 대응 - 내가 선택한 종족과 같은편 종족, 상대방 종족, 유리한 종족 밸런스, 불리한 종족 밸런스에 따라 나의 빌드는 항상 갈라질 수 있다."
+];
+
+const QUESTION_IMAGES = [
+  "https://i.ibb.co/Fb8pzcJ3/image.jpg",
+  "https://i.ibb.co/rfbH7wsz/image.jpg",
+  "https://i.ibb.co/MkDND88S/image.jpg",
+  "https://i.ibb.co/4ZVMCHcY/image.jpg",
+  "https://i.ibb.co/Mk8xHPRP/1.jpg",
+  "https://i.ibb.co/chNgY3wz/image.jpg",
+  "https://i.ibb.co/cXMFX3jK/image.jpg",
+  "https://i.ibb.co/mV3RdSjk/image.jpg",
+  "https://i.ibb.co/gZn4Hqsr/image.jpg",
+  "https://i.ibb.co/HZmyVVm/image.jpg",
+  "https://i.ibb.co/qqHsr5v/image.jpg",
+  "https://i.ibb.co/ZR8MG9MG/image.jpg",
+  "https://i.ibb.co/v4PkBF8p/image.jpg",
+  "https://i.ibb.co/W4tXQ8SJ/image.jpg",
+  "https://i.ibb.co/M0cVbPF/image.jpg",
+  "https://i.ibb.co/x8JRG3kh/image.jpg",
+  "https://i.ibb.co/c9qh950/image.jpg",
+  "https://i.ibb.co/DHfBRWzp/image.jpg",
+  "https://i.ibb.co/rGcgJ7QG/image.jpg",
+  "https://i.ibb.co/5xnrG6ry/image.jpg"
 ];
 
 const ANSWER_OPTIONS = [
@@ -239,6 +266,7 @@ function renderQuestion(){
   const qNo=currentQuestion+1;
   document.getElementById("questionNumber").textContent="QUESTION "+String(qNo).padStart(2,"0");
   document.getElementById("questionText").textContent=QUESTIONS[currentQuestion];
+  document.getElementById("questionImage").src=QUESTION_IMAGES[currentQuestion];
 
   const box=document.getElementById("answers");
   box.innerHTML="";
