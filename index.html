@@ -14,6 +14,13 @@ body{
 button,input{font-family:inherit} button{cursor:pointer}
 .page{min-height:100vh;padding:45px 20px 80px}
 .container{width:min(1180px,100%);margin:auto}
+.main-brand-row{display:flex;align-items:center;justify-content:center;gap:18px;margin:0 auto 30px;max-width:760px}
+.main-brand-poster{width:120px;height:78px;object-fit:cover;border-radius:12px;border:1px solid rgba(106,164,255,.22);box-shadow:0 10px 28px rgba(0,0,0,.28);flex:0 0 auto}
+.main-brand-text{text-align:left}
+.main-brand-text .badge{margin-bottom:8px}
+.main-brand-text .title{font-size:clamp(30px,4vw,46px)}
+.main-brand-text .subtitle{margin-top:7px}
+@media(max-width:560px){.main-brand-row{gap:12px;justify-content:flex-start}.main-brand-poster{width:92px;height:64px}.main-brand-text .title{font-size:28px;letter-spacing:-1.5px}.main-brand-text .subtitle{font-size:12px}}
 .header{text-align:center;margin-bottom:30px}
 .badge{display:inline-block;margin-bottom:13px;padding:7px 15px;border:1px solid rgba(91,157,255,.4);border-radius:999px;background:rgba(37,105,220,.12);color:#82bcff;font-size:13px;font-weight:800}
 .title{margin:0;font-size:clamp(36px,5vw,52px);font-weight:900;letter-spacing:-2px}
@@ -69,7 +76,7 @@ button,input{font-family:inherit} button{cursor:pointer}
 <div id="loadingOverlay" class="loading-overlay"><div class="loading-box">처리 중입니다...</div></div>
 <div class="page"><div class="container">
 <section id="mainSection">
-<div class="header"><div class="badge">STARCRAFT SKILL SURVEY</div><h1 class="title">TD팸 설문조사</h1><div class="subtitle">통합 종족 스타크래프트 실력 설문</div></div>
+<div class="main-brand-row"><img class="main-brand-poster" src="https://i.ibb.co/B5P4DwFf/50cae0e9-8c11-4253-9c09-2ec2f5b5d922.png" alt="TD팸 길드 메인 포스터"><div class="main-brand-text"><div class="badge">STARCRAFT SKILL SURVEY</div><h1 class="title">TD팸 설문조사</h1><div class="subtitle">통합 종족 스타크래프트 실력 설문</div></div></div>
 <div class="main-grid">
 <div class="card">
   <div class="card-title">설문 안내</div>
