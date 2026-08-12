@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TD팸 설문조사</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;font-family:Arial,"Noto Sans KR",sans-serif;color:#fff;
+  background:radial-gradient(circle at top,#17233d 0%,#0b1020 45%,#050811 100%);
+}
+button,input{font-family:inherit} button{cursor:pointer}
+.page{min-height:100vh;padding:45px 20px 80px}
+.container{width:min(1180px,100%);margin:auto}
+.header{text-align:center;margin-bottom:30px}
+.badge{display:inline-block;margin-bottom:13px;padding:7px 15px;border:1px solid rgba(91,157,255,.4);border-radius:999px;background:rgba(37,105,220,.12);color:#82bcff;font-size:13px;font-weight:800}
+.title{margin:0;font-size:clamp(36px,5vw,52px);font-weight:900;letter-spacing:-2px}
+.subtitle{margin-top:10px;color:#9ca9bd;font-size:15px}
+.main-grid{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:22px;align-items:start}
+.card{padding:30px;border:1px solid rgba(106,164,255,.20);border-radius:22px;background:rgba(16,23,40,.95);box-shadow:0 20px 60px rgba(0,0,0,.30)}
+.card-title{margin-bottom:18px;font-size:23px;font-weight:900}
+.description{color:#d2daea;font-size:16px;line-height:1.8}
+.guide{margin-top:24px;padding:18px;border:1px solid rgba(255,255,255,.07);border-radius:15px;background:rgba(255,255,255,.035)}
+.guide-title{margin-bottom:10px;font-weight:900}
+.guide-row{display:grid;grid-template-columns:110px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.055)}
+.guide-row:last-child{border-bottom:none}.guide-name{color:#6eb0ff;font-weight:800}.guide-text{color:#bac5d7;line-height:1.5}
+.login-box{margin-top:25px;padding:22px;border:1px solid rgba(72,139,255,.25);border-radius:16px;background:rgba(22,39,71,.55)}
+.login-title{margin-bottom:15px;font-size:18px;font-weight:900}
+.form-grid{display:grid;grid-template-columns:1fr 180px;gap:10px}
+.input{width:100%;padding:14px 15px;border:1px solid rgba(255,255,255,.14);border-radius:11px;outline:none;background:rgba(255,255,255,.06);color:#fff;font-size:15px}
+.input:focus{border-color:#4e94ff}.login-help{margin-top:9px;color:#8997ac;font-size:12px}.start-wrap{text-align:center;margin-top:18px}
+.main-btn{min-width:230px;padding:16px 28px;border:0;border-radius:13px;background:linear-gradient(135deg,#296fff,#4a96ff);color:white;font-size:17px;font-weight:900;box-shadow:0 12px 30px rgba(40,111,255,.28)}
+.main-btn:disabled{opacity:.5;cursor:wait}
+.ranking-card{position:sticky;top:20px}.ranking-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.ranking-title strong{font-size:22px}.ranking-top{color:#6caeff;font-size:12px;font-weight:900}
+.ranking-head,.rank-row{display:grid;grid-template-columns:55px 1fr 75px;align-items:center}
+.ranking-head{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.07);color:#8391a6;font-size:12px}
+.ranking-list{max-height:450px;overflow-y:auto;scrollbar-width:thin}
+.rank-row{min-height:45px;padding:0 10px;border-bottom:1px solid rgba(255,255,255,.05)}
+.rank-number{color:#8ea0b7;font-weight:800}.rank-id{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-weight:700}.rank-grade{text-align:right;color:#70b2ff;font-size:13px;font-weight:900}
+.no-ranking{padding:40px 10px;text-align:center;color:#7f8da1;font-size:13px}
+#surveySection{display:none;width:min(900px,100%);margin:auto}
+.progress-info{display:flex;justify-content:space-between;margin-bottom:8px;color:#9eabc0;font-size:13px}
+.progress-bar{height:8px;margin-bottom:20px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.08)}
+.progress-fill{width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#2878ff,#73c7ff);transition:width .25s}
+.question-number{margin-bottom:13px;color:#6bb1ff;font-size:14px;font-weight:900}
+.question-text{margin-bottom:25px;font-size:23px;line-height:1.55;font-weight:900}
+.answers{display:grid;gap:10px}
+.answer{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:13px;background:rgba(255,255,255,.035);cursor:pointer}
+.answer:hover{border-color:rgba(81,148,255,.55);background:rgba(49,119,255,.08)}.answer.selected{border-color:#4c94ff;background:rgba(42,116,255,.16)}
+.check{width:22px;height:22px;flex:0 0 auto;border:2px solid #68758b;border-radius:5px;text-align:center;line-height:18px}
+.answer.selected .check{border-color:#5fa5ff;background:#347ef4}.answer.selected .check::after{content:"✓";font-weight:900}
+.answer-name{font-weight:900}.answer-desc{margin-top:3px;color:#8f9caf;font-size:13px}
+.survey-buttons{display:flex;gap:12px;margin-top:25px}.nav-btn{flex:1;padding:14px;border:0;border-radius:11px;font-weight:900}.prev-btn{background:rgba(255,255,255,.08);color:white}.next-btn{background:#327df5;color:white}.nav-btn:disabled{opacity:.35}
+#completeSection{display:none;width:min(700px,100%);margin:70px auto 0;text-align:center}
+.complete-check{font-size:64px;color:#65adff}.complete-title{margin-top:10px;font-size:30px;font-weight:900}.complete-label{margin-top:30px;color:#9daabd;font-size:14px}
+.grade-result{margin:8px 0 30px;color:#71b5ff;font-size:46px;font-weight:900}.return-btn{padding:15px 28px;border:0;border-radius:12px;background:#347ff5;color:white;font-size:16px;font-weight:900}
+.loading-overlay{display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(3,7,15,.73)}
+.loading-box{padding:25px 35px;border-radius:15px;background:#121a2b;font-weight:800}
+@media(max-width:850px){.main-grid{grid-template-columns:1fr}.ranking-card{position:static}}
+@media(max-width:560px){.page{padding:28px 11px 50px}.card{padding:20px}.form-grid{grid-template-columns:1fr}.guide-row{grid-template-columns:1fr;gap:4px}.question-text{font-size:19px}}
+</style>
+</head>
+<body>
+<div id="loadingOverlay" class="loading-overlay"><div class="loading-box">처리 중입니다...</div></div>
+<div class="page"><div class="container">
+<section id="mainSection">
+<div class="header"><div class="badge">STARCRAFT SKILL SURVEY</div><h1 class="title">TD팸 설문조사</h1><div class="subtitle">통합 종족 스타크래프트 실력 설문</div></div>
+<div class="main-grid">
+<div class="card">
+  <div class="card-title">설문 안내</div>
+  <div class="description">스타크래프트에 관련된 본인의 실력을 알고자 하는 설문지 입니다.<br><br>아래 기준으로 생각하시고, 각 문항에서 본인에게 가장 가까운 항목의 네모칸을 체크해주시면 됩니다.</div>
+  <div class="guide">
+    <div class="guide-title">응답 기준</div>
+    <div class="guide-row"><div class="guide-name">매우 그렇다</div><div class="guide-text">항상 이런 상황이 오면 가능하다.</div></div>
+    <div class="guide-row"><div class="guide-name">그렇다</div><div class="guide-text">때때로 모르고 지나치거나 까먹는 경우는 있지만 자주 사용한다.</div></div>
+    <div class="guide-row"><div class="guide-name">보통이다</div><div class="guide-text">생각나면 하는 편이다.</div></div>
+    <div class="guide-row"><div class="guide-name">아니다</div><div class="guide-text">여유로운 상황이 아니면 그렇게 까지 생각은 잘 못한다.</div></div>
+    <div class="guide-row"><div class="guide-name">매우 아니다</div><div class="guide-text">그렇게는 못한다.</div></div>
+  </div>
+  <div class="login-box">
+    <div class="login-title">설문 참가</div>
+    <div class="form-grid">
+      <input id="userId" class="input" maxlength="20" autocomplete="off" placeholder="아이디">
+      <input id="password" class="input" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="비밀번호 4자리">
+    </div>
+    <div class="login-help">아이디와 숫자 4자리 비밀번호를 입력해주세요.</div>
+    <div class="start-wrap"><button id="startBtn" class="main-btn" onclick="startSurvey()">통합 종족 설문시작</button></div>
+  </div>
+</div>
+<div class="card ranking-card">
+  <div class="ranking-title"><strong>순위</strong><span class="ranking-top">TOP 30</span></div>
+  <div class="ranking-head"><div>순위</div><div>아이디</div><div style="text-align:right">등급</div></div>
+  <div id="rankingList" class="ranking-list"><div class="no-ranking">순위를 불러오는 중입니다.</div></div>
+</div>
+</div>
+</section>
+
+<section id="surveySection">
+<div class="header"><div class="badge">TD FAMILY</div><h1 class="title">TD팸 설문조사</h1></div>
+<div class="progress-info"><span id="progressText">1 / 20</span><span id="progressPercent">5%</span></div>
+<div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+<div class="card">
+  <div id="questionNumber" class="question-number"></div>
+  <div id="questionText" class="question-text"></div>
+  <div id="answers" class="answers"></div>
+  <div class="survey-buttons">
+    <button id="prevBtn" class="nav-btn prev-btn" onclick="previousQuestion()">이전</button>
+    <button id="nextBtn" class="nav-btn next-btn" onclick="nextQuestion()">다음</button>
+  </div>
+</div>
+</section>
+
+<section id="completeSection" class="card">
+  <div class="complete-check">✓</div>
+  <div class="complete-title">설문조사가 완료되었습니다.</div>
+  <div class="complete-label">당신의 최종 등급</div>
+  <div id="gradeResult" class="grade-result"></div>
+  <button class="return-btn" onclick="returnMain()">메인으로 돌아가기</button>
+</section>
+</div></div>
+
+<script>
+const SUPABASE_URL = "여기에_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "여기에_SUPABASE_ANON_KEY";
+
+const QUESTIONS = [
+  "상대방의 빌드와 병력 구성을 보고 대응 방법을 빠르게 판단할 수 있다.",
+  "게임 초반 정찰을 통해 상대방의 전략을 어느 정도 예상할 수 있다.",
+  "미니맵을 자주 확인하면서 상대 병력의 움직임을 파악하는 편이다.",
+  "교전이 시작되면 병력을 효율적으로 컨트롤할 수 있다.",
+  "상대방의 병력 조합에 맞춰 내 병력 조합을 변경할 수 있다.",
+  "게임 상황에 따라 공격과 수비 중 어떤 선택이 필요한지 판단할 수 있다.",
+  "멀티를 가져가야 하는 적절한 타이밍을 알고 있다.",
+  "자원 상황을 확인하면서 생산시설과 병력을 적절하게 늘릴 수 있다.",
+  "상대방의 견제 가능성을 생각하고 미리 대비하는 편이다.",
+  "전투 중에도 생산과 병력 충원을 꾸준히 할 수 있다.",
+  "상대방의 주요 병력이 어디에 있는지 지속적으로 예상하는 편이다.",
+  "상대방의 약점을 발견하면 바로 공격이나 견제로 연결할 수 있다.",
+  "불리한 상황에서도 역전할 수 있는 방법을 찾는 편이다.",
+  "유리한 상황에서 무리하지 않고 안정적으로 게임을 끝낼 수 있다.",
+  "맵의 지형을 활용하여 유리한 위치에서 전투하려고 한다.",
+  "상대방의 테크트리를 보고 다음에 나올 유닛을 예상할 수 있다.",
+  "게임 중 필요한 업그레이드를 적절한 시기에 진행할 수 있다.",
+  "상대방이 공격할 가능성이 높은 타이밍을 예상할 수 있다.",
+  "여러 지역에서 동시에 전투가 발생해도 어느 정도 대응할 수 있다.",
+  "게임 전체 흐름을 보면서 다음 행동을 미리 계획하는 편이다."
+];
+
+const ANSWER_OPTIONS = [
+  {name:"매우 그렇다",desc:"항상 이런 상황이 오면 가능하다.",score:5},
+  {name:"그렇다",desc:"때때로 모르고 지나치거나 까먹는 경우는 있지만 자주 사용한다.",score:4},
+  {name:"보통이다",desc:"생각나면 하는 편이다.",score:3},
+  {name:"아니다",desc:"여유로운 상황이 아니면 그렇게 까지 생각은 잘 못한다.",score:2},
+  {name:"매우 아니다",desc:"그렇게는 못한다.",score:1}
+];
+
+let currentQuestion = 0;
+let responses = new Array(QUESTIONS.length).fill(null);
+let activeUserId = "";
+let activePassword = "";
+
+document.getElementById("password").addEventListener("input", function(){
+  this.value = this.value.replace(/\D/g,"").slice(0,4);
+});
+
+function showLoading(){ document.getElementById("loadingOverlay").style.display="flex"; }
+function hideLoading(){ document.getElementById("loadingOverlay").style.display="none"; }
+
+async function sb(path, options={}){
+  const res = await fetch(SUPABASE_URL + "/rest/v1/" + path, {
+    ...options,
+    headers:{
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+      "Content-Type":"application/json",
+      ...(options.headers||{})
+    }
+  });
+  if(!res.ok){
+    const text = await res.text();
+    throw new Error(text || "Supabase 요청 실패");
+  }
+  const ct = res.headers.get("content-type") || "";
+  return ct.includes("application/json") ? await res.json() : null;
+}
+
+function getGrade(score){
+  if(score >= 95) return "S등급";
+  if(score >= 90) return "상픽";
+  if(score >= 70) return "중픽";
+  return "하픽";
+}
+
+async function loadRanking(){
+  const box = document.getElementById("rankingList");
+  try{
+    const rows = await sb("td_survey_results?select=user_id,grade,total_score,created_at&order=total_score.desc,created_at.asc&limit=30");
+    box.innerHTML = "";
+    if(!rows || rows.length===0){
+      box.innerHTML='<div class="no-ranking">아직 완료된 설문이 없습니다.</div>';
+      return;
+    }
+    rows.forEach((r,i)=>{
+      const row=document.createElement("div");
+      row.className="rank-row";
+      row.innerHTML='<div class="rank-number">'+(i+1)+'위</div><div class="rank-id"></div><div class="rank-grade"></div>';
+      row.children[1].textContent=r.user_id;
+      row.children[2].textContent=r.grade;
+      box.appendChild(row);
+    });
+  }catch(e){
+    console.error(e);
+    box.innerHTML='<div class="no-ranking">순위를 불러오지 못했습니다.</div>';
+  }
+}
+
+async function startSurvey(){
+  const userId=document.getElementById("userId").value.trim();
+  const password=document.getElementById("password").value.trim();
+
+  if(userId.length<2){ alert("아이디를 2자 이상 입력해주세요."); return; }
+  if(!/^\d{4}$/.test(password)){ alert("비밀번호는 숫자 4자리로 입력해주세요."); return; }
+
+  activeUserId=userId;
+  activePassword=password;
+  currentQuestion=0;
+  responses=new Array(QUESTIONS.length).fill(null);
+
+  document.getElementById("mainSection").style.display="none";
+  document.getElementById("surveySection").style.display="block";
+  document.getElementById("completeSection").style.display="none";
+  renderQuestion();
+  window.scrollTo(0,0);
+}
+
+function renderQuestion(){
+  const qNo=currentQuestion+1;
+  document.getElementById("questionNumber").textContent="QUESTION "+String(qNo).padStart(2,"0");
+  document.getElementById("questionText").textContent=QUESTIONS[currentQuestion];
+
+  const box=document.getElementById("answers");
+  box.innerHTML="";
+
+  ANSWER_OPTIONS.forEach((opt,index)=>{
+    const item=document.createElement("div");
+    item.className="answer"+(responses[currentQuestion]===index?" selected":"");
+    item.innerHTML='<div class="check"></div><div><div class="answer-name"></div><div class="answer-desc"></div></div>';
+    item.querySelector(".answer-name").textContent=opt.name;
+    item.querySelector(".answer-desc").textContent=opt.desc;
+    item.onclick=()=>{ responses[currentQuestion]=index; renderQuestion(); };
+    box.appendChild(item);
+  });
+
+  const p=Math.round(qNo/QUESTIONS.length*100);
+  document.getElementById("progressText").textContent=qNo+" / "+QUESTIONS.length;
+  document.getElementById("progressPercent").textContent=p+"%";
+  document.getElementById("progressFill").style.width=p+"%";
+  document.getElementById("prevBtn").disabled=currentQuestion===0;
+  document.getElementById("nextBtn").textContent=currentQuestion===QUESTIONS.length-1?"설문 완료":"다음";
+}
+
+function previousQuestion(){
+  if(currentQuestion>0){ currentQuestion--; renderQuestion(); window.scrollTo(0,0); }
+}
+
+async function nextQuestion(){
+  if(responses[currentQuestion]===null){ alert("응답 항목을 하나 선택해주세요."); return; }
+  if(currentQuestion<QUESTIONS.length-1){
+    currentQuestion++; renderQuestion(); window.scrollTo(0,0); return;
+  }
+  await submitSurvey();
+}
+
+async function submitSurvey(){
+  if(responses.some(v=>v===null)){ alert("모든 문항에 응답해주세요."); return; }
+
+  showLoading();
+  try{
+    const details=responses.map((selectedIndex,i)=>({
+      q_no:i+1,
+      question:QUESTIONS[i],
+      selected:ANSWER_OPTIONS[selectedIndex].name,
+      score:ANSWER_OPTIONS[selectedIndex].score
+    }));
+    const total=details.reduce((sum,a)=>sum+a.score,0);
+    const grade=getGrade(total);
+
+    const existing = await sb("td_survey_results?select=id,password&user_id=eq."+encodeURIComponent(activeUserId)+"&limit=1");
+
+    if(existing && existing.length){
+      if(existing[0].password !== activePassword){
+        throw new Error("이미 사용 중인 아이디이거나 비밀번호가 일치하지 않습니다.");
+      }
+      await sb("td_survey_results?user_id=eq."+encodeURIComponent(activeUserId),{
+        method:"PATCH",
+        headers:{"Prefer":"return=minimal"},
+        body:JSON.stringify({
+          password:activePassword,
+          answers:details,
+          total_score:total,
+          grade:grade,
+          updated_at:new Date().toISOString()
+        })
+      });
+    } else {
+      await sb("td_survey_results",{
+        method:"POST",
+        headers:{"Prefer":"return=minimal"},
+        body:JSON.stringify({
+          user_id:activeUserId,
+          password:activePassword,
+          answers:details,
+          total_score:total,
+          grade:grade
+        })
+      });
+    }
+
+    document.getElementById("surveySection").style.display="none";
+    document.getElementById("completeSection").style.display="block";
+    document.getElementById("gradeResult").textContent=grade;
+    window.scrollTo(0,0);
+  }catch(e){
+    alert(e.message || "저장 중 오류가 발생했습니다.");
+  }finally{
+    hideLoading();
+  }
+}
+
+async function returnMain(){
+  activeUserId="";
+  activePassword="";
+  responses=new Array(QUESTIONS.length).fill(null);
+  currentQuestion=0;
+  document.getElementById("userId").value="";
+  document.getElementById("password").value="";
+  document.getElementById("completeSection").style.display="none";
+  document.getElementById("surveySection").style.display="none";
+  document.getElementById("mainSection").style.display="block";
+  await loadRanking();
+  window.scrollTo(0,0);
+}
+
+loadRanking();
+</script>
+</body>
+</html>
